@@ -90,6 +90,7 @@ const doMenuClick = (key: string) => {
 }
 
 .logo {
-  height: 48px;
+  height: 64px;
+  width: 64px;
 }
 </style>
