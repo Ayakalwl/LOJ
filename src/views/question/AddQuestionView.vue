@@ -142,6 +142,7 @@ const loadData = async () => {
   );
   if (res.code === 0) {
     form.value = res.data as any;
+    // json 转 js 对象
     if (!form.value.judgeCase) {
       form.value.judgeCase = [
         {
@@ -149,6 +150,8 @@ const loadData = async () => {
           output: "",
         },
       ];
+    } else {
+      form.value.judgeCase = JSON.parse(form.value.judgeCase as any);
     }
     if (!form.value.judgeConfig) {
       form.value.judgeConfig = {
@@ -156,6 +159,13 @@ const loadData = async () => {
         stackLimit: 1000,
         timeLimit: 1000,
       };
+    } else {
+      form.value.judgeConfig = JSON.parse(form.value.judgeConfig as any);
+    }
+    if (!form.value.tags) {
+      form.value.tags = [];
+    } else {
+      form.value.tags = JSON.parse(form.value.tags as any);
     }
   } else {
     message.error("加载失败." + res.message);
@@ -168,11 +178,25 @@ onMounted(() => {
 
 const doSubmit = async () => {
   console.log(form.value);
-  const res = await QuestionControllerService.addQuestionUsingPost(form.value);
-  if (res.code === 0) {
-    message.success("创建成功");
+  // 区分更新和创建
+  if (updatePage) {
+    const res = await QuestionControllerService.updateQuestionUsingPost(
+      form.value
+    );
+    if (res.code === 0) {
+      message.success("更新成功");
+    } else {
+      message.error("更新失败." + res.message);
+    }
   } else {
-    message.error("创建失败." + res.message);
+    const res = await QuestionControllerService.addQuestionUsingPost(
+      form.value
+    );
+    if (res.code === 0) {
+      message.success("创建成功");
+    } else {
+      message.error("创建失败." + res.message);
+    }
   }
 };
 
