@@ -24,6 +24,7 @@
 import { onMounted, ref } from "vue";
 import { Question, QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
+import { useRouter } from "vue-router";
 
 const show = ref(true);
 
@@ -110,12 +111,21 @@ const doDelete = async (question: Question) => {
   });
   if (res.code === 0) {
     message.success("删除成功");
-    // todo 更新页面
+    loadData();
+  } else {
+    message.error("删除失败");
   }
 };
 
+const router = useRouter();
+
 const doUpdate = (question: Question) => {
-  console.log(question);
+  router.push({
+    path: "/update/question",
+    query: {
+      id: question.id,
+    },
+  });
 };
 </script>
 <style scoped>

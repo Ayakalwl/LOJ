@@ -101,16 +101,21 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import MdEditor from "@/components/MdEditor.vue";
 import { QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
+import { useRoute } from "vue-router";
 
-const form = reactive({
-  title: "A + B",
-  tags: ["栈", "简单"],
-  answer: "暴力破解",
-  content: "题目内容",
+const route = useRoute();
+// 如果页面地址包含 update 视为更新页面
+const updatePage = route.path.includes("update");
+
+let form = ref({
+  title: "",
+  tags: [],
+  answer: "",
+  content: "",
   judgeConfig: {
     memoryLimit: 1000,
     stackLimit: 1000,
@@ -118,15 +123,52 @@ const form = reactive({
   },
   judgeCase: [
     {
-      input: "1 2",
-      output: "3 4",
+      input: "",
+      output: "",
     },
   ],
 });
 
+/**
+ * 根据题目 id 获取老的数据
+ */
+const loadData = async () => {
+  const id = route.query.id;
+  if (!id) {
+    return;
+  }
+  const res = await QuestionControllerService.getQuestionByIdUsingGet(
+    id as any
+  );
+  if (res.code === 0) {
+    form.value = res.data as any;
+    if (!form.value.judgeCase) {
+      form.value.judgeCase = [
+        {
+          input: "",
+          output: "",
+        },
+      ];
+    }
+    if (!form.value.judgeConfig) {
+      form.value.judgeConfig = {
+        memoryLimit: 1000,
+        stackLimit: 1000,
+        timeLimit: 1000,
+      };
+    }
+  } else {
+    message.error("加载失败." + res.message);
+  }
+};
+
+onMounted(() => {
+  loadData();
+});
+
 const doSubmit = async () => {
-  console.log(form);
-  const res = await QuestionControllerService.addQuestionUsingPost(form);
+  console.log(form.value);
+  const res = await QuestionControllerService.addQuestionUsingPost(form.value);
   if (res.code === 0) {
     message.success("创建成功");
   } else {
@@ -138,7 +180,7 @@ const doSubmit = async () => {
  * 新增判题用例
  */
 const handleAdd = () => {
-  form.judgeCase.push({
+  form.value.judgeCase.push({
     input: "",
     output: "",
   });
@@ -148,15 +190,15 @@ const handleAdd = () => {
  * 删除判题用例
  */
 const handleDelete = (index: number) => {
-  form.judgeCase.splice(index, 1);
+  form.value.judgeCase.splice(index, 1);
 };
 
 const onContentChange = (value: string) => {
-  form.content = value;
+  form.value.content = value;
 };
 
 const onAnswerChange = (value: string) => {
-  form.answer = value;
+  form.value.answer = value;
 };
 </script>
 
