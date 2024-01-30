@@ -9,6 +9,7 @@ import ACCESS_ENUM from "@/access/accessEnum";
 import AddQuestionView from "@/views/question/AddQuestionView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import QuestionsView from "@/views/question/QuestionsView.vue";
+import ViewQuestionsView from "@/views/question/ViewQuestionsView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -37,7 +38,17 @@ export const routes: Array<RouteRecordRaw> = [
     component: QuestionsView,
   },
   {
-    path: "/add/question",
+    path: "/view/question/:id",
+    name: "在线做题",
+    component: ViewQuestionsView,
+    props: true,
+    meta: {
+      access: ACCESS_ENUM.USER,
+      hideInMenu: true,
+    },
+  },
+  {
+    path: "/view/question",
     name: "创建题目",
     component: AddQuestionView,
     meta: {
