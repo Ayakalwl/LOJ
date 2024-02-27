@@ -1,14 +1,23 @@
 <template>
-  <div id="questionsView">
+  <div id="questionSubmitView">
     <a-form :model="searchParams" layout="inline">
-      <a-form-item field="title" label="名称" style="min-width: 240px">
-        <a-input v-model="searchParams.title" placeholder="请输入名称" />
+      <a-form-item field="questionId" label="题号" style="min-width: 240px">
+        <a-input v-model="searchParams.questionId" placeholder="请输入" />
       </a-form-item>
-      <a-form-item field="tags" label="标签" style="min-width: 240px">
-        <a-input-tag v-model="searchParams.tags" placeholder="请输入标签" />
-      </a-form-item>
-      <a-form-item>
-        <a-button type="primary" @click="doSubmit">提交</a-button>
+      <a-form-item field="language" label="编程语音" style="min-width: 240px">
+        <a-select
+          v-model="searchParams.language"
+          :style="{ width: '320px' }"
+          placeholder="选择编程语音"
+        >
+          <a-option>java</a-option>
+          <a-option>cpp</a-option>
+          <a-option>go</a-option>
+          <a-option>html</a-option>
+        </a-select>
+        <a-form-item>
+          <a-button type="primary" @click="doSubmit">搜索</a-button>
+        </a-form-item>
       </a-form-item>
     </a-form>
     <a-divider size="0" />
@@ -24,28 +33,20 @@
       }"
       @page-change="onPageChange"
     >
-      <template #tags="{ record }">
-        <a-space wrap>
-          <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
-            >{{ tag }}
-          </a-tag>
-        </a-space>
-      </template>
-      <template #acceptedRate="{ record }">
+      <template #judgeInfo="{ record }">
+        <!--        {{ JSON.stringify(record.judgeInfo) }}-->
         {{
-          `${record.submitNum ? record.acceptedNum / record.submitNum : "0"}%
-      (${record.acceptedNum}/${record.submitNum})`
+          "状态：" +
+          record.judgeInfo.message +
+          " 内存使用：" +
+          record.judgeInfo.memory +
+          "kb 所用时间：" +
+          record.judgeInfo.time +
+          "ms"
         }}
       </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD") }}
-      </template>
-      <template #optional="{ record }">
-        <a-space>
-          <a-button type="primary" @click="toQuestionPage(record)"
-            >做题
-          </a-button>
-        </a-space>
       </template>
     </a-table>
   </div>
@@ -56,7 +57,7 @@ import { onMounted, ref, watchEffect } from "vue";
 import {
   Question,
   QuestionControllerService,
-  QuestionQueryRequest,
+  QuestionSubmitQueryRequest,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
@@ -65,16 +66,20 @@ import moment from "moment";
 const tableRef = ref();
 const dataList = ref([]);
 const total = ref(0);
-const searchParams = ref<QuestionQueryRequest>({
-  title: "",
-  tags: [],
+const searchParams = ref<QuestionSubmitQueryRequest>({
+  questionId: undefined,
+  language: undefined,
   pageSize: 10,
   current: 1,
 });
 
 const loadData = async () => {
-  const res = await QuestionControllerService.listQuestionVoByPageUsingPost(
-    searchParams.value
+  const res = await QuestionControllerService.listQuestionSubmitByPageUsingPost(
+    {
+      ...searchParams.value,
+      sortField: "createTime",
+      sortOrder: "descend",
+    }
   );
   if (res.code === 0) {
     dataList.value = res.data.records;
@@ -100,31 +105,32 @@ onMounted(() => {
 
 const columns = [
   {
-    title: "题号",
+    title: "提交号",
     dataIndex: "id",
   },
   {
-    title: "题目名称",
-    dataIndex: "title",
+    title: "编程语言",
+    dataIndex: "language",
   },
   {
-    title: "标签",
-    slotName: "tags",
+    title: "判题信息",
+    slotName: "judgeInfo",
   },
   {
-    title: "答案",
-    dataIndex: "answer",
+    title: "判题状态",
+    dataIndex: "status",
   },
   {
-    title: "通过率",
-    slotName: "acceptedRate",
+    title: "题目 id",
+    dataIndex: "questionId",
+  },
+  {
+    title: "提交者 id",
+    dataIndex: "userId",
   },
   {
     title: "创建时间",
     slotName: "createTime",
-  },
-  {
-    slotName: "optional",
   },
 ];
 const onPageChange = (page: number) => {
@@ -158,7 +164,7 @@ const doSubmit = () => {
 };
 </script>
 <style scoped>
-#questionsView {
+#questionSubmitView {
   max-width: 1280px;
   margin: 0 auto;
 }
