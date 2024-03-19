@@ -8,6 +8,9 @@
       :model="form"
       @submit="handleSubmit"
     >
+      <a-form-item field="userName" label="昵称">
+        <a-input v-model="form.userName" placeholder="请输入昵称" />
+      </a-form-item>
       <a-form-item field="userAccount" label="账号">
         <a-input v-model="form.userAccount" placeholder="请输入账号" />
       </a-form-item>
@@ -28,8 +31,14 @@
         />
       </a-form-item>
       <a-form-item>
-        <a-button type="primary" html-type="submit" style="width: 120px"
+        <a-button
+          type="primary"
+          html-type="submit"
+          style="width: 120px; margin-right: 20px"
           >注册
+        </a-button>
+        <a-button type="outline" href="/user/login" style="width: 120px"
+          >登录
         </a-button>
       </a-form-item>
     </a-form>
@@ -47,6 +56,7 @@ import { UserControllerService, UserRegisterRequest } from "../../../generated";
  * 表单信息
  */
 const form = reactive({
+  userName: "",
   checkPassword: "",
   userAccount: "",
   userPassword: "",

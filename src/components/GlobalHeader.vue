@@ -22,8 +22,18 @@
       </a-menu>
     </a-col>
     <a-col flex="100px">
-      <div>
-        {{ store.state.user?.loginUser?.userName ?? "未登录" }}
+      <!--      <div>-->
+      <!--        {{ store.state.user?.loginUser?.userName ?? "一登录" }}-->
+      <!--      </div>-->
+      <div style="text-align: center">
+        <span v-if="store.state.user?.loginUser?.userName">
+          <p>{{ store.state.user.loginUser.userName }}</p>
+          <a-button type="outline" @click="userLogout">退出</a-button>
+        </span>
+        <span v-else>
+          <p>未登录</p>
+          <a-button type="outline" href="/user/login">登录 </a-button>
+        </span>
       </div>
     </a-col>
   </a-row>
@@ -36,6 +46,7 @@ import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import checkAccess from "@/access/checkAccess";
 import ACCESS_ENUM from "@/access/accessEnum";
+import { Question, UserControllerService } from "../../generated";
 
 const router = useRouter();
 const store = useStore();
@@ -74,6 +85,14 @@ setTimeout(() => {
 const doMenuClick = (key: string) => {
   router.push({
     path: key,
+  });
+};
+
+const userLogout = () => {
+  UserControllerService.userLogoutUsingPost();
+  router.push({
+    path: "/",
+    // replace: true,
   });
 };
 </script>

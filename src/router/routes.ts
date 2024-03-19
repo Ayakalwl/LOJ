@@ -34,14 +34,27 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/",
+    name: "主页",
+    component: QuestionsView,
+  },
+  {
     path: "/questions",
     name: "浏览题目",
     component: QuestionsView,
+    meta: {
+      // access: ACCESS_ENUM.USER,
+      hideInMenu: true,
+    },
   },
   {
     path: "/questions_submit",
     name: "浏览题目提交",
     component: QuestionSubmitView,
+    meta: {
+      access: ACCESS_ENUM.USER,
+      // hideInMenu: true,
+    },
   },
   {
     path: "/view/question/:id",
@@ -77,11 +90,6 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       access: ACCESS_ENUM.ADMIN,
     },
-  },
-  {
-    path: "/",
-    name: "主页",
-    component: QuestionsView,
   },
 
   // {
