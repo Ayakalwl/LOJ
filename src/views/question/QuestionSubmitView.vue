@@ -36,7 +36,6 @@
       <template #judgeInfo="{ record }">
         <!--        {{ JSON.stringify(record.judgeInfo) }}-->
         {{
-          "状态：" +
           record.judgeInfo.message +
           " 内存使用：" +
           record.judgeInfo.memory +
@@ -44,6 +43,9 @@
           record.judgeInfo.time +
           "ms"
         }}
+      </template>
+      <template #userVo="{ record }">
+        {{ record.userVO.userName }}
       </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD") }}
@@ -125,8 +127,8 @@ const columns = [
     dataIndex: "questionId",
   },
   {
-    title: "提交者 id",
-    dataIndex: "userId",
+    title: "提交者",
+    slotName: "userVo",
   },
   {
     title: "创建时间",
