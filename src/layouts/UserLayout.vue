@@ -10,7 +10,10 @@
       <a-layout-content class="content">
         <router-view />
       </a-layout-content>
-      <a-layout-footer class="footer">OJ判题系统 by Lxy</a-layout-footer>
+      <a-layout-footer class="footer">
+        OJ判题系统 by Lxy
+        <a href="https://beian.miit.gov.cn">桂ICP备2024026323号-1</a>
+      </a-layout-footer>
     </a-layout>
   </div>
 </template>
