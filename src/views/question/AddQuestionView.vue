@@ -12,7 +12,7 @@
       <a-form-item field="content" label="题目内容">
         <MdEditor :value="form.content" :handle-change="onContentChange" />
       </a-form-item>
-      <a-form-item field="answer" label="答案">
+      <a-form-item field="answer" label="算法">
         <MdEditor :value="form.answer" :handle-change="onAnswerChange" />
       </a-form-item>
 

@@ -80,7 +80,7 @@ const columns = [
     dataIndex: "tags",
   },
   {
-    title: "答案",
+    title: "算法",
     dataIndex: "answer",
   },
   {

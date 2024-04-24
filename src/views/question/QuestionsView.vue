@@ -115,7 +115,7 @@ const columns = [
     slotName: "tags",
   },
   {
-    title: "答案",
+    title: "算法",
     dataIndex: "answer",
   },
   {
